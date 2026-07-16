@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>AI Job Hunt Assistant - Development Log</title>
+<style>
+body { font-family: "Microsoft YaHei", sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #333; line-height: 1.8; }
+h1 { font-size: 22px; border-bottom: 2px solid #7c3aed; padding-bottom: 8px; }
+h2 { font-size: 16px; color: #7c3aed; margin-top: 28px; }
+h3 { font-size: 14px; color: #555; margin-top: 16px; }
+ul { padding-left: 20px; }
+li { margin-bottom: 4px; }
+code { background: #f5f3f9; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+.date { color: #999; font-size: 12px; }
+</style></head>
+<body>
+<h1>AI Job Hunt Assistant - Development Log</h1>
+<p class="date">Last updated: 2026-07-15</p>
+
+<h2>2026-07-15 (Final Round)</h2>
+<h3>WYSIWYG Editor</h3>
+<ul>
+  <li>Replaced all textarea-based editors with <code>contentEditable</code> div in RichTextEditor</li>
+  <li>Bold (<b>B</b>), Underline (<u>U</u>), Bullet List (&#8226;) buttons work visually in real-time</li>
+  <li>Project description editor also uses RichTextEditor</li>
+  <li>Preview renders HTML directly via <code>dangerouslySetInnerHTML</code></li>
+</ul>
+
+<h3>PDF Export</h3>
+<ul>
+  <li>Replaced reportlab PDF generation with browser-based print approach</li>
+  <li>Clicking PDF export opens preview HTML in new window and triggers browser print dialog</li>
+  <li>PDF output matches the in-app preview style exactly</li>
+  <li>DOCX export uses python-docx with proper styling</li>
+</ul>
+
+<h3>JD Analysis Enhancement</h3>
+<ul>
+  <li>Experience score now extracts year requirements from JD description text</li>
+  <li>Education score handles empty fields gracefully, scores based on user degree</li>
+  <li>Different JDs produce meaningfully different scores (was all 44-50 before)</li>
+  <li>Added parse error display when DeepSeek API fails</li>
+</ul>
+
+<h3>Custom Resume Modal</h3>
+<ul>
+  <li>Left panel: Original resume preview (fetched from /api/resume-export/markdown)</li>
+  <li>Right panel: Editable custom resume textarea</li>
+  <li>Export dropdown in modal: MD / DOCX / PDF</li>
+</ul>
+
+<h2>2026-07-15 (Round 2)</h2>
+<h3>Basic Info Preview</h3>
+<ul>
+  <li>Photo moved to right side of header</li>
+  <li>All fields displayed with <code>|</code> separator, field+value wrap as unit</li>
+  <li>Fields: job_intention, email, phone, birth_date, highest_degree + custom fields</li>
+</ul>
+
+<h3>Education Preview</h3>
+<ul>
+  <li>School name left-aligned, time period right-aligned on same line</li>
+  <li>Major and degree displayed below in lighter/smaller font</li>
+</ul>
+
+<h3>Project Experience</h3>
+<ul>
+  <li>Simplified editor: only project_name, project_time, project_role as separate fields</li>
+  <li>All other content goes into one RichTextEditor (like self_intro)</li>
+  <li>Preview shows full HTML-rendered description with line breaks</li>
+</ul>
+
+<h3>Export Dropdown</h3>
+<ul>
+  <li>Replaced individual export buttons with dropdown menu (MD / DOCX / PDF)</li>
+  <li>Both ResumeBuilder and custom resume modal use the same ExportDropdown component</li>
+</ul>
+
+<h3>History Delete</h3>
+<ul>
+  <li>Added DELETE endpoint <code>/api/chat/session/{id}</code></li>
+  <li>Each session in history list has a x delete button</li>
+</ul>
+
+<h3>Bug Fixes</h3>
+<ul>
+  <li>JD Match: Fixed <code>profile.preferences</code> AttributeError (field did not exist in model)</li>
+  <li>Custom Resume: Fixed <code>profile.basic_info.city</code> reference</li>
+  <li>PDF: Switched from msyh.ttc (TTC not supported) to simhei.ttf</li>
+</ul>
+
+<h2>Initial Build</h2>
+<ul>
+  <li>React + Vite frontend with TypeScript</li>
+  <li>FastAPI backend with DeepSeek LLM integration</li>
+  <li>8-section resume builder: basic_info, self_intro, skills, work_experience, project_experience, education, awards, self_evaluation</li>
+  <li>AI chat onboarding flow for resume data collection</li>
+  <li>JD management: paste, parse, save, match analysis, custom resume generation</li>
+  <li>Export: Markdown, DOCX (python-docx), PDF (browser print)</li>
+</ul>
+
+</body></html>

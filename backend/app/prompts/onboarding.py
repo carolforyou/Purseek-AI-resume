@@ -1,0 +1,146 @@
+﻿ONBOARDING_STAGE_PROMPTS = {
+    "basic_info": "收集基本信息：姓名、求职意向、电子邮箱、联系方式、出生年月、最高学历。",
+    "self_intro": "收集自我介绍：个人简介、职业优势、技术方向等。",
+    "work_experience": "收集工作经验：公司名称、职位名称、工作时间和具体工作内容。",
+    "skills": "收集个人技能：后端技术、框架技术、数据库、中间件、前端技术、开发工具和技术能力描述。",
+    "education": "收集教育背景：学校名称、专业、学历、在校时间和主修课程。",
+    "project_experience": "收集项目经验：项目名称、时间、角色、技术栈、项目描述、个人职责和项目成果。",
+    "awards": "收集获奖情况和证书。",
+    "self_evaluation": "收集自我评价。",
+}
+
+STAGE_TRANSITION_RULES = {
+    "basic_info": "基本信息字段填写完毕后，自动转入自我介绍阶段。",
+    "self_intro": "自我介绍填写完毕后，自动转入工作经验阶段。",
+    "work_experience": "工作经验填写完毕后，自动转入个人技能阶段。",
+    "skills": "个人技能填写完毕后，自动转入教育背景阶段。",
+    "education": "教育背景填写完毕后，自动转入项目经验阶段。",
+    "project_experience": "项目经验中涵盖STAR法则（项目描述+个人职责+项目成果）后，自动转入获奖情况阶段。",
+    "awards": "获奖情况填写完毕后，自动转入自我评价阶段。",
+    "self_evaluation": "自我评价填写完毕后，建档流程完成。",
+}
+
+STAGE_REQUIRED_FIELDS = {
+    "basic_info": ["name", "job_intention", "email", "phone", "birth_date", "highest_degree"],
+    "self_intro": ["self_intro"],
+    "work_experience": ["company_name", "position_name", "work_time", "work_contents"],
+    "skills": ["backend", "framework", "database", "middleware", "frontend", "tools", "description"],
+    "education": ["school_name", "major", "degree", "school_time", "main_courses"],
+    "project_experience": ["project_name", "project_time", "project_role", "technologies", "project_description", "personal_responsibilities", "project_results"],
+    "awards": ["awards"],
+    "self_evaluation": ["self_evaluation"],
+}
+
+FIELD_LABELS = {
+    "name": "姓名",
+    "job_intention": "求职意向",
+    "email": "电子邮箱",
+    "phone": "联系方式",
+    "birth_date": "出生年月",
+    "highest_degree": "最高学历",
+    "self_intro": "自我介绍",
+    "company_name": "公司名称",
+    "position_name": "职位名称",
+    "work_time": "工作时间",
+    "work_contents": "工作内容",
+    "backend": "后端技术",
+    "framework": "框架技术",
+    "database": "数据库",
+    "middleware": "中间件/分布式",
+    "frontend": "前端技术",
+    "tools": "开发工具",
+    "description": "技术能力描述",
+    "school_name": "学校名称",
+    "major": "专业",
+    "degree": "学历",
+    "school_time": "在校时间",
+    "main_courses": "主修课程",
+    "project_name": "项目名称",
+    "project_time": "项目时间",
+    "project_role": "项目角色",
+    "technologies": "技术栈",
+    "project_description": "项目描述",
+    "personal_responsibilities": "个人职责",
+    "project_results": "项目成果",
+    "awards": "获奖情况/证书",
+    "self_evaluation": "自我评价",
+}
+
+STAGE_KEYWORDS = {
+    "name": ["姓名", "我叫", "我是"],
+    "job_intention": ["求职意向", "岗位", "方向", "目标", "想做", "应聘"],
+    "email": ["邮箱", "email", "@"],
+    "phone": ["电话", "手机", "联系方式", "13", "15", "18"],
+    "birth_date": ["出生", "生日", "年月", "年"],
+    "highest_degree": ["学历", "本科", "硕士", "博士", "大专"],
+    "self_intro": ["介绍", "优势", "特长", "能力", "擅长", "自我评价"],
+    "company_name": ["公司", "单位", "任职于", "就职于"],
+    "position_name": ["职位", "岗位", "担任", "职责"],
+    "work_time": ["时间", "年", "月", "至今", "-"],
+    "work_contents": ["负责", "参与", "实现", "设计", "开发"],
+    "backend": ["后端", "Python", "Java", "Go", "FastAPI", "Spring"],
+    "framework": ["框架", "React", "Vue", "Django", "Flask"],
+    "database": ["数据库", "MySQL", "PostgreSQL", "MongoDB", "Redis"],
+    "middleware": ["中间件", "Redis", "Kafka", "RabbitMQ", "分布式"],
+    "frontend": ["前端", "JavaScript", "TypeScript", "HTML", "CSS"],
+    "tools": ["工具", "Git", "Docker", "VSCode", "WebStorm"],
+    "description": ["能力", "掌握", "熟练", "精通", "了解"],
+    "school_name": ["学校", "大学", "学院", "毕业于"],
+    "major": ["专业", "方向", "系"],
+    "degree": ["学历", "本科", "硕士", "博士"],
+    "school_time": ["时间", "年", "月", "-"],
+    "main_courses": ["课程", "学习", "主修", "选修"],
+    "project_name": ["项目", "系统", "平台", "课题"],
+    "project_time": ["时间", "年", "月"],
+    "project_role": ["角色", "负责", "参与", "主导"],
+    "technologies": ["技术", "技术栈", "框架", "语言"],
+    "project_description": ["背景", "描述", "目标", "需求"],
+    "personal_responsibilities": ["职责", "负责", "实现", "设计"],
+    "project_results": ["成果", "结果", "提升", "指标", "优化"],
+    "awards": ["获奖", "证书", "奖学金", "荣誉"],
+    "self_evaluation": ["评价", "总结", "优势", "不足"],
+}
+
+STAR_KEYWORDS = {
+    "situation": ["背景", "需求", "问题", "目标"],
+    "task": ["任务", "职责", "目标", "负责"],
+    "action": ["实现", "设计", "开发", "优化", "搭建", "处理"],
+    "result": ["成果", "结果", "提升", "指标", "优化", "完成"],
+}
+
+STAGE_QUESTION_BANK = {
+    "basic_info": [
+        "请先告诉我你的姓名和求职意向是什么？",
+        "方便提供你的电子邮箱和联系方式吗？",
+        "你的出生年月和最高学历是？",
+    ],
+    "self_intro": [
+        "请简单介绍一下你自己，包括你的职业优势和技术方向。",
+        "你认为自己最大的核心竞争力是什么？",
+    ],
+    "work_experience": [
+        "请介绍一下你的工作经历，包括公司名称、职位和工作时间。",
+        "在这段工作中，你主要负责哪些具体工作内容？",
+    ],
+    "skills": [
+        "请列举你掌握的技术栈，包括后端、前端、数据库等方面。",
+        "你对哪些技术比较熟悉？有什么项目经验可以说明？",
+    ],
+    "education": [
+        "请介绍你的教育背景，包括学校名称、专业和学历。",
+        "在校期间主要学习了哪些课程？",
+    ],
+    "project_experience": [
+        "请介绍一个你做过的项目，包括项目背景和核心功能。",
+        "在这个项目中你担任什么角色，做了哪些具体工作？",
+        "这个项目取得了什么成果或有什么量化指标？",
+    ],
+    "awards": [
+        "你获得过哪些奖项或证书？",
+        "有没有值得一提的荣誉或认证？",
+    ],
+    "self_evaluation": [
+        "请做一个简单的自我评价，说说你的优势和待提升的地方。",
+        "你认为自己最适合什么样的工作环境和团队？",
+    ],
+}

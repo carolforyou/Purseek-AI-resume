@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Job Hunt Assistant — 开发文档汇总</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f3f9; color: #1a1a2e; line-height: 1.7; padding: 40px 20px; }
+.container { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 26px; margin-bottom: 8px; color: #1a1a2e; }
+h2 { font-size: 18px; margin: 32px 0 12px; padding-bottom: 8px; border-bottom: 2px solid #a78bfa; color: #7c3aed; }
+h3 { font-size: 14px; margin: 20px 0 8px; color: #4a4a6c; }
+.meta { color: #8a8aa0; font-size: 13px; margin-bottom: 24px; }
+.section { background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid #e8e4f0; }
+.section h4 { font-size: 14px; color: #7c3aed; margin-bottom: 8px; }
+.section p, .section li { font-size: 13px; color: #3a3a5c; }
+.section ul { padding-left: 18px; margin-top: 6px; }
+.section li { margin-bottom: 4px; }
+code { background: #f0ecf6; padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #7c3aed; }
+.file-path { font-family: monospace; font-size: 12px; color: #6c6c8a; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 600; margin-right: 4px; }
+.tag-backend { background: rgba(124,58,237,0.1); color: #7c3aed; }
+.tag-frontend { background: rgba(16,185,129,0.1); color: #059669; }
+.tag-model { background: rgba(245,158,11,0.1); color: #d97706; }
+.tag-bugfix { background: rgba(239,68,68,0.1); color: #ef4444; }
+.tag-feature { background: rgba(59,130,246,0.1); color: #3b82f6; }
+table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px; }
+th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #e8e4f0; }
+th { color: #6c6c8a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+.date { color: #999; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>AI Job Hunt Assistant</h1>
+<p class="meta">开发文档汇总 · 2026-07-15 · 工作目录: <code>E:\学习\AI Job Hunt Assistant</code></p>
+
+<div class="section">
+  <h4>项目简介</h4>
+  <p>中文 AI 求职助手，帮助用户建立个人履历库、生成母简历、匹配 JD、一键转英文。前后端分离架构：React + TypeScript 前端 (Vite)，FastAPI + Python 后端。</p>
+</div>
+
+<!-- Architecture -->
+<h2>系统架构</h2>
+<div class="section">
+  <h4>目录结构</h4>
+  <table>
+    <tr><th>路径</th><th>说明</th></tr>
+    <tr><td class="file-path">frontend/src/App.tsx</td><td>主应用入口，含窄边栏导航（56px 图标式，深色背景）</td></tr>
+    <tr><td class="file-path">frontend/src/pages/Welcome.tsx</td><td>个人资料页：基本信息表单 + 自动保存 + JSON 导出/导入</td></tr>
+    <tr><td class="file-path">frontend/src/pages/Chat.tsx</td><td>AI 对话页：8 阶段履历对话 + 历史会话管理 + 阶段点击跳转</td></tr>
+    <tr><td class="file-path">frontend/src/pages/ResumeBuilder.tsx</td><td>简历编辑器：编辑/预览双模式 + 拖拽排序 + 增删板块 + 富文本 + AI 润色</td></tr>
+    <tr><td class="file-path">frontend/src/pages/JDAnalysis.tsx</td><td>岗位匹配页：粘贴 JD → AI 解析 → 匹配分析 → 定制子简历</td></tr>
+    <tr><td class="file-path">frontend/src/lib/api.ts</td><td>前端 API 客户端（所有后端接口封装）</td></tr>
+    <tr><td class="file-path">frontend/src/types/index.ts</td><td>TypeScript 类型定义</td></tr>
+    <tr><td class="file-path">frontend/src/styles.css</td><td>全局样式（紫色主题 #7c3aed）</td></tr>
+    <tr><td class="file-path">backend/app/main.py</td><td>FastAPI 应用入口</td></tr>
+    <tr><td class="file-path">backend/app/api/routes/*.py</td><td>7 个路由模块：chat, profile, resume, resume_export, jd, custom_resume, health</td></tr>
+    <tr><td class="file-path">backend/app/models/*.py</td><td>Pydantic 数据模型</td></tr>
+    <tr><td class="file-path">backend/app/services/*.py</td><td>业务逻辑层（含 DeepSeek AI 集成）</td></tr>
+    <tr><td class="file-path">backend/app/prompts/onboarding.py</td><td>AI 对话 prompt 模板和阶段配置</td></tr>
+    <tr><td class="file-path">data/profile.json</td><td>用户履历数据持久化</td></tr>
+    <tr><td class="file-path">data/sessions/*.json</td><td>AI 对话历史会话</td></tr>
+    <tr><td class="file-path">data/jds.json</td><td>JD 数据持久化</td></tr>
+    <tr><td class="file-path">data/exports/</td><td>导出文件目录（MD/PDF/HTML/PNG）</td></tr>
+  </table>
+</div>
+
+<!-- Features -->
+<h2>功能清单</h2>
+
+<div class="section">
+  <h4>页面 1：个人资料 (Welcome)</h4>
+  <ul>
+    <li>中文表单：姓名、求职意向、邮箱、电话、出生年月、最高学历、学校、专业、学位、在校时间、自我介绍</li>
+    <li>自动保存：停止输入 2 秒后自动调用 <code>saveProfile</code> 写入 <code>data/profile.json</code></li>
+    <li>导出 JSON 按钮：下载 <code>profile.json</code> 文件</li>
+    <li>导入 JSON 按钮：选择文件恢复 profile</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h4>页面 2：AI 对话 (Chat)</h4>
+  <ul>
+    <li>8 阶段引导式对话：基本信息→自我介绍→工作经历→技能→教育→项目经验→获奖→自我评价</li>
+    <li>每个阶段完成后自动提取信息到 profile</li>
+    <li>新建对话 / 历史会话下拉（最近 10 个）</li>
+    <li>点击历史会话可恢复继续对话</li>
+    <li>右侧阶段进度面板——点击任意阶段可跳转</li>
+    <li>会话持久化到 <code>data/sessions/{session_id}.json</code></li>
+    <li>AI 记忆功能：保存对话历史，支持上下文理解</li>
+    <li>STAR 法则检测：项目经验阶段自动检测 Situation/Task/Action/Result 要素</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h4>页面 3：简历编辑器 (ResumeBuilder)</h4>
+  <ul>
+    <li><strong>编辑模式</strong>：</li>
+    <ul>
+      <li>8 个默认板块 + 自定义增删板块</li>
+      <li>板块拖拽排序、标题可点击重命名</li>
+      <li>基本信息：6 字段拖拽重新排列 + 照片上传/删除 + 自定义字段（键值对）增删</li>
+      <li>自我介绍：富文本工具栏（加粗 B / 下划线 U / 无序列表）</li>
+      <li>个人技能：统一标签输入框（输入回车添加，点击 × 删除）</li>
+      <li>工作经历：多条目列表，每条含公司/职位/时间 + 工作内容标签</li>
+      <li>项目经验：多条目，含名称/时间/角色 + 技术栈 + 富文本描述</li>
+      <li>教育背景：多条目列表（如本科+硕士），每条含学校/专业/学位/时间 + 课程标签</li>
+      <li>获奖/自我评价：标签列表编辑器</li>
+      <li>每个板块有「AI 润色」按钮，调用 DeepSeek 优化措辞</li>
+    </ul>
+    <li><strong>预览模式</strong>：</li>
+    <ul>
+      <li>模拟真实简历排版：照片+姓名+联系方式→各板块按序展示</li>
+      <li>照片在右侧，基本信息字段用 <code>|</code> 分隔</li>
+      <li>点击任意板块/字段可切回编辑定位</li>
+      <li>AI 润色结果在预览中直接呈现</li>
+    </ul>
+    <li><strong>工具栏</strong>：AI 润色全文 | 一键转英文 | 导出 MD/DOCX/PDF/PNG</li>
+    <li><strong>默认模块顺序</strong>：基本信息 → 教育背景 → 工作经历 → 项目经验 → 个人技能 → 获奖证书</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h4>页面 4：岗位匹配 (JDAnalysis)</h4>
+  <ul>
+    <li>粘贴 JD 文本 → AI 解析（标题/公司/地点/技能/描述/要求）</li>
+    <li>保存解析结果，匹配分析：总分 + 技能/经验/学历/偏好四项得分条</li>
+    <li>优劣势分析 + 改进建议 + 需掌握技能</li>
+    <li>一键生成定制子简历（针对该 JD 优化）</li>
+    <li>定制子简历预览：左右对比面板（原始简历 vs 定制简历）</li>
+    <li>不同岗位生成个性化修改策略</li>
+  </ul>
+</div>
+
+<!-- API Endpoints -->
+<h2>后端 API 端点</h2>
+<div class="section">
+  <h4>Chat 模块 <span class="tag tag-backend">backend</span></h4>
+  <table>
+    <tr><th>方法</th><th>路径</th><th>说明</th></tr>
+    <tr><td>POST</td><td>/api/chat/start</td><td>新建对话会话</td></tr>
+    <tr><td>POST</td><td>/api/chat/message</td><td>发送消息，AI 回复</td></tr>
+    <tr><td>GET</td><td>/api/chat/sessions</td><td>列出所有历史会话</td></tr>
+    <tr><td>POST</td><td>/api/chat/session/{id}/resume</td><td>恢复指定会话</td></tr>
+    <tr><td>DELETE</td><td>/api/chat/session/{id}</td><td>删除指定会话</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <h4>Profile 模块 <span class="tag tag-backend">backend</span></h4>
+  <table>
+    <tr><th>方法</th><th>路径</th><th>说明</th></tr>
+    <tr><td>GET</td><td>/api/profile</td><td>获取当前 profile</td></tr>
+    <tr><td>PATCH</td><td>/api/profile</td><td>更新单个字段</td></tr>
+    <tr><td>PUT</td><td>/api/profile/save</td><td>全量保存 profile</td></tr>
+    <tr><td>POST</td><td>/api/profile/extract</td><td>AI 从对话中提取结构化信息</td></tr>
+    <tr><td>GET</td><td>/api/profile/export</td><td>导出 profile JSON</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <h4>Resume 模块 <span class="tag tag-backend">backend</span></h4>
+  <table>
+    <tr><th>方法</th><th>路径</th><th>说明</th></tr>
+    <tr><td>GET</td><td>/api/resume/draft</td><td>生成简历草稿</td></tr>
+    <tr><td>POST</td><td>/api/resume/polish</td><td>AI 润色单个板块</td></tr>
+    <tr><td>POST</td><td>/api/resume/polish-full</td><td>AI 润色全文</td></tr>
+    <tr><td>POST</td><td>/api/resume/translate-to-english</td><td>一键翻译简历为英文</td></tr>
+    <tr><td>GET/PUT</td><td>/api/resume/layout</td><td>简历布局配置</td></tr>
+    <tr><td>GET</td><td>/api/resume-export/markdown</td><td>导出 Markdown</td></tr>
+    <tr><td>GET</td><td>/api/resume-export/pdf</td><td>导出 PDF（浏览器打印）</td></tr>
+    <tr><td>GET</td><td>/api/resume-export/html</td><td>导出 HTML（预览版式，可打印）</td></tr>
+    <tr><td>GET</td><td>/api/resume-export/template-docx</td><td>导出 DOCX</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <h4>JD 模块 <span class="tag tag-backend">backend</span></h4>
+  <table>
+    <tr><th>方法</th><th>路径</th><th>说明</th></tr>
+    <tr><td>GET</td><td>/api/jd</td><td>列出所有 JD</td></tr>
+    <tr><td>POST</td><td>/api/jd</td><td>创建 JD</td></tr>
+    <tr><td>DELETE</td><td>/api/jd/{id}</td><td>删除 JD</td></tr>
+    <tr><td>POST</td><td>/api/jd/parse</td><td>AI 解析 JD 文本</td></tr>
+    <tr><td>GET</td><td>/api/jd/{id}/match</td><td>JD 匹配分析</td></tr>
+    <tr><td>POST</td><td>/api/custom-resume</td><td>生成定制子简历</td></tr>
+  </table>
+</div>
+
+<!-- Data Model -->
+<h2>数据模型</h2>
+<div class="section">
+  <h4>ProfileData（简历数据核心模型）<span class="tag tag-model">model</span></h4>
+  <ul>
+    <li><code>basic_info</code>: name, job_intention, email, phone, birth_date, highest_degree, photo (base64), custom_fields ({key, value}[])</li>
+    <li><code>self_intro</code>: string — 自我介绍</li>
+    <li><code>work_experiences</code>: 工作经历列表（company_name, position_name, work_time, work_contents[]）</li>
+    <li><code>skills</code>: string[] — 技能标签列表（已简化为单一数组）</li>
+    <li><code>education</code>: 教育背景列表（school_name, major, degree, school_time, main_courses[]）— 支持多条</li>
+    <li><code>project_experiences</code>: 项目经验列表（project_name, project_time, project_role, technologies[], project_description, personal_responsibilities[], project_results[]）</li>
+    <li><code>awards</code>: string[] — 获奖</li>
+    <li><code>self_evaluation</code>: string[] — 自我评价</li>
+  </ul>
+</div>
+
+<!-- AI Integration -->
+<h2>AI 集成</h2>
+<div class="section">
+  <h4>DeepSeek API <span class="tag tag-backend">backend</span></h4>
+  <ul>
+    <li>配置文件：<code>backend/.env</code> — 设置 <code>DEEPSEEK_API_KEY</code> 和 <code>DEEPSEEK_MODEL</code></li>
+    <li>服务类：<code>backend/app/services/deepseek_service.py</code></li>
+    <li>同时支持 OpenRouter 和 Groq 作为备选（通过 settings 切换）</li>
+    <li>所有 AI 调用超时 60 秒</li>
+    <li>双 Provider 故障降级机制</li>
+  </ul>
+</div>
+
+<!-- Startup -->
+<h2>启动方式</h2>
+<div class="section">
+  <h4>后端</h4>
+  <p><code>cd backend</code><br>
+  <code>python -X utf8 -m uvicorn app.main:app --host 0.0.0.0 --port 8000</code></p>
+  <p style="color:#8a8aa0;font-size:12px;margin-top:4px;">注意：必须使用 <code>-X utf8</code> 标志以确保中文文件名和源代码正确解析。</p>
+
+  <h4>前端</h4>
+  <p><code>cd frontend</code><br>
+  <code>npm run dev</code> (开发模式，端口 3000，自动代理 /api → 127.0.0.1:8000)</p>
+
+  <h4>访问</h4>
+  <p>前端：<code>http://localhost:3000</code><br>
+  后端 API 文档：<code>http://localhost:8000/docs</code></p>
+</div>
+
+<!-- Modification History -->
+<h2>修改历史（按时间倒序）</h2>
+
+<div class="section">
+  <h4>第七轮修改（2026-07-15）<span class="tag tag-bugfix">bugfix</span> <span class="tag tag-feature">feature</span></h4>
+  <ul>
+    <li><strong>网站打不开修复</strong>：修复后端文件 BOM 字符问题（<code>chat.py</code>、<code>resume_export.py</code>），修复 <code>chat_service.py</code> 缺失方法</li>
+    <li><strong>PNG 导出优化</strong>：安装 <code>html2canvas</code>，直接导出简历预览区域为长图，不再打开 HTML 页面</li>
+    <li><strong>JD 预览框大小一致</strong>：修改 CSS 布局，设置固定高度 <code>420px</code>，左右面板强制等高，添加内容包装层</li>
+    <li><strong>简历模块顺序调整</strong>：基本信息 → 教育背景 → 工作经历 → 项目经验 → 个人技能 → 获奖证书</li>
+    <li><strong>简历间距优化</strong>：板块间距从 18px 缩小到 10px，行间距从 1.65/1.7 缩小到 1.5/1.45，字体从 13px 缩小到 12px</li>
+    <li><strong>JD 定制策略个性化</strong>：修改说明中添加岗位名称，修复技能重复添加问题，添加工作经验年数显示</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h4>第六轮修改（2026-07-15）<span class="tag tag-feature">feature</span></h4>
+  <ul>
+    <li><strong>富文本编辑器</strong>：所有 textarea 编辑器替换为 <code>contentEditable</code> div，支持实时加粗、下划线、无序列表</li>
+    <li><strong>PDF 导出优化</strong>：改用浏览器打印方式，打开预览 HTML 新窗口并触发打印对话框，输出样式与预览一致</li>
+    <li><strong>JD 分析增强</strong>：经验分数从 JD 描述中提取年限要求，教育分数处理空字段，不同 JD 产生差异化分数</li>
+    <li><strong>定制简历模态框</strong>：左侧原始简历预览，右侧可编辑定制简历，支持 MD/DOCX/PDF 导出</li>
+    <li><strong>JD 解析错误处理</strong>：DeepSeek API 失败时显示解析错误信息</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h4>第五轮修改（2026-07-14）<span class="tag tag-feature">feature</span></h4>
+  <ul>
+    <li>PDF 导出改为 HTML 模板渲染，与预览模式样式一致；新增 <code>/api/resume-export/html</code></li>
+    <li>AI 润色功能：polishSection 和 polishFull 使用 DeepSeek，返回 polished content 和 changes 列表</li>
+    <li>自动保存：Welcome 和 ResumeBuilder 中所有修改即时调用 saveProfile</li>
+    <li>基本信息 6 字段支持拖拽重新排列位置</li>
+    <li>个人技能从分类（后端/框架/数据库...）简化为统一标签列表 <code>skills: string[]</code></li>
+    <li>教育背景从单条改为多条目列表 <code>education: Education[]</code>（支持本科+硕士等）</li>
+    <li>富文本工具栏：加粗 (**)、下划线 (__)、字号选择器 (12-18px)，套用于自我介绍 textarea</li>
+    <li>AI 对话阶段进度面板：点击任意阶段可跳转</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h4>第四轮修改（2026-07-14）<span class="tag tag-feature">feature</span></h4>
+  <ul>
+    <li>所有板块支持直接编辑（不再只能通过对话）：工作经历/项目/教育/技能/获奖/自我评价均可直接增删改</li>
+    <li>板块增删：× 删除按钮 + 「+ 添加板块」按钮</li>
+    <li>基本信息增强：照片上传、自定义字段（键值对）增删</li>
+    <li>简历预览模式：编辑/预览切换，预览模拟真实排版，点击可切回编辑</li>
+    <li>App.tsx 用 key 机制强制重新挂载 ResumeBuilder，确保对话后数据同步</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h4>第三轮修改（2026-07-14）<span class="tag tag-feature">feature</span></h4>
+  <ul>
+    <li>全界面中文化：Welcome/Chat/ResumeBuilder 标签、提示、按钮均为中文</li>
+    <li>一键转英文功能：按钮 + <code>/api/resume/translate-to-english</code> 端点</li>
+    <li>自动保存 + JSON 导出/导入（Welcome 页）</li>
+    <li>AI 对话历史会话：保存到 <code>data/sessions/</code>，新建/恢复会话</li>
+    <li>导航时 ResumeBuilder 用 key 强制重新挂载更新数据</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h4>第二轮修改（2026-07-14）<span class="tag tag-feature">feature</span></h4>
+  <ul>
+    <li>窄边栏导航（56px 图标式，SVG 图标）</li>
+    <li>Welcome 页面：个人资料表单作为第一步</li>
+    <li>Chat 页面：8 阶段引导对话 + 进度面板</li>
+    <li>ResumeBuilder 页面：编辑模式（拖拽排序、重命名、AI 润色）+ 导出</li>
+    <li>JDAnalysis 页面：粘贴 JD → AI 解析 → 匹配分析 → 定制子简历</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h4>第一轮修改（初始架构）<span class="tag tag-feature">feature</span></h4>
+  <ul>
+    <li>从零搭建 FastAPI 后端 + React 前端框架</li>
+    <li>集成 DeepSeek/Groq/OpenRouter 三个 AI 提供商</li>
+    <li>实现 Chat 对话引导、Profile 管理、Resume 草稿生成</li>
+    <li>PDF/Markdown/DOCX 导出</li>
+    <li>JD 管理和匹配分析</li>
+  </ul>
+</div>
+
+<!-- Bug Fixes -->
+<h2>Bug 修复记录</h2>
+<div class="section">
+  <ul>
+    <li><strong>网站打不开</strong>：后端文件存在 BOM 字符（U+FEFF）导致 SyntaxError，已重新写入修复</li>
+    <li><strong>对话重复提问</strong>：姓名识别关键词不足、缺少会话状态记忆、缺失字段判断逻辑错误，已修复</li>
+    <li><strong>AI 无记忆功能</strong>：未保存对话历史，已添加 <code>message_history</code> 存储完整对话</li>
+    <li><strong>项目被误判不存在</strong>：AI 错误理解"没有"为整个项目不存在，已在 prompt 中明确规则</li>
+    <li><strong>JD 预览框大小不一致</strong>：左右面板高度因内容加载而变化，已设置固定高度和强制等高</li>
+    <li><strong>JD 定制策略相同</strong>：修改说明未包含岗位名称，已添加个性化策略</li>
+    <li><strong>JD Match AttributeError</strong>：<code>profile.preferences</code> 字段不存在，已修复</li>
+    <li><strong>Custom Resume 引用错误</strong>：<code>profile.basic_info.city</code> 不存在，已修复</li>
+    <li><strong>PDF 字体错误</strong>：从 msyh.ttc 切换到 simhei.ttf（TTC 不支持）</li>
+  </ul>
+</div>
+
+<!-- Known Issues / Notes -->
+<h2>注意事项</h2>
+<div class="section">
+  <ul>
+    <li><strong>中文路径问题</strong>：项目路径含中文（<code>E:\学习\AI Job Hunt Assistant</code>），导致 PowerShell 和部分 Python 子进程处理时出现编码问题。启动后端时必须加 <code>-X utf8</code>。</li>
+    <li><strong>reportlab PDF</strong> 已废弃，改用 HTML 模板导出，效果更好且支持照片渲染。</li>
+    <li><strong>Vite 热更新</strong>：前端修改后自动刷新。仅在 <code>npm run build</code> 时检查编译错误。</li>
+    <li><strong>数据目录</strong>：所有持久化数据在 <code>data/</code> 目录下，不纳入版本控制。</li>
+    <li><strong>简历排版优化</strong>：为确保简历能控制在一页 A4 以内，已缩小板块间距和行间距。</li>
+    <li><strong>PNG 导出依赖</strong>：需要安装 <code>html2canvas</code> 依赖（<code>npm install html2canvas</code>）。</li>
+  </ul>
+</div>
+
+</div>
+</body>
+</html>
