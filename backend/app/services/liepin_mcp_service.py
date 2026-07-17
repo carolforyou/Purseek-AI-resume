@@ -55,21 +55,24 @@ class LiepinMCPService:
         self._mcp_available = self._check_available()
         self._client = None
         self._token = None
-        self._load_token()
+        if self._mcp_available:
+            self._load_token()
         if self._mcp_available and self._token:
             self._init_client()
 
     def _check_available(self) -> bool:
-        if os.getenv("LIEPIN_MCP_ENABLED", "").lower() in ("true", "1", "yes"):
-            return True
+        enabled = os.getenv("LIEPIN_MCP_ENABLED", "").lower() in ("true", "1", "yes")
+        if not enabled:
+            return False
         try:
             import sys
             sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'liepin-cil'))
             from liepin_cli.core.client import LiepinClient
             from liepin_cli.core.config import resolve_config
+            logger.info("liepin-cil 模块已发现")
             return True
         except ImportError:
-            logger.info("liepin-cil 未安装或不可用")
+            logger.warning("LIEPIN_MCP_ENABLED=true 但 liepin-cil 模块未安装")
             return False
 
     def _load_token(self) -> None:
