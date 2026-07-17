@@ -22,8 +22,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy backend code
 COPY backend/ .
 
-# Copy built frontend — main.py looks for <project_root>/frontend/dist/
-COPY --from=frontend-builder /frontend/dist /app/frontend/dist/
+# Copy built frontend - main.py looks for <project_root>/frontend/dist/
+# project_root = Path(__file__).parent.parent.parent = /
+COPY --from=frontend-builder /frontend/dist /frontend/dist/
 
 # Railway injects $PORT automatically
 CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT
